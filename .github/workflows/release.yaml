@@ -14,7 +14,7 @@ jobs:
           fetch-depth: 0
 
       - name: Define release
-        uses: paulhatch/semantic-version@4.0.2
+        uses: paulhatch/semantic-version@v4.0.2
         with:
           tag_prefix: "v"
           major_pattern: "BREAKING CHANGE:"
