@@ -91,7 +91,7 @@ jobs:
             echo "The tag will not be created"
             exit 0
           fi
-          
+
           git tag "$tag_version"
           git push --tags
           
