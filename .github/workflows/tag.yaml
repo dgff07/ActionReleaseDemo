@@ -19,7 +19,13 @@ jobs:
       
       - name: Define version
         run: |
-          last_tag=$(git describe --abbrev=0 --tags)
+          exist_tag=$(git tag)
+          last_tag=""
+
+          if [[ -n "$exist_tag" ]]; then
+              last_tag=$(git describe --abbrev=0 --tags)
+          fi
+
           major=0
           minor=0
           patch=0
@@ -29,9 +35,9 @@ jobs:
 
           if [[ $last_tag =~ ^[0-9]+.[0-9]+.[0-9]+$ ]]; then
               IFS='.' read -ra ELEM <<< "$last_tag"
-              major=$ELEM[0]
-              minor=$ELEM[1]
-              patch=$ELEM[2]
+              major=${ELEM[0]}
+              minor=${ELEM[1]}
+              patch=${ELEM[2]}
           fi
 
           last_commit=$(git log -1 --pretty=%B)
@@ -44,17 +50,17 @@ jobs:
 
               "breaking change:"*)
                   echo "Creating major release"
-                  major= "$((major+1))"
+                  major="$((major+1))"
                   ;;
 
               "feat:"*)
                   echo "Creating minor release"
-                  minor= "$((minor+1))"
+                  minor="$((minor+1))"
                   ;;
 
               "fix:"*)
                   echo "Creating patch release"
-                  patch= "$((patch+1))"
+                  patch="$((patch+1))"
                   ;;
 
               *)
@@ -64,10 +70,11 @@ jobs:
           esac
 
           export TAG_VERSION="na"
-          if [[ $version_upgraded == 1]]; then 
+          if [[ $version_upgraded == 1 ]]; then 
               TAG_VERSION="$major.$minor.$patch"
               echo "::set-env name=TAG_VERSION::$TAG_VERSION"
           fi
+
 
       - name: Create tag
         id: create_tag
