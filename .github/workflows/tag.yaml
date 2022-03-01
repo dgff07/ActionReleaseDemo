@@ -1,0 +1,86 @@
+name: "tag"
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
+jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+    name: Create tag
+    steps:
+      - name: Checkout api-gateway repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      
+      - name: Define version
+        run: |
+         last_tag=$(git describe --abbrev=0 --tags)
+          major=0
+          minor=0
+          patch=0
+
+          echo "========LAST tag========"
+          echo "$last_tag"
+
+          if [[ $last_tag =~ ^[0-9]+.[0-9]+.[0-9]+$ ]]; then
+              IFS='.' read -ra ELEM <<< "$last_tag"
+              major=$ELEM[0]
+              minor=$ELEM[1]
+              patch=$ELEM[2]
+          fi
+
+          last_commit=$(git log -1 --pretty=%B)
+          echo "========LAST commit========"
+          echo "$last_commit"
+
+          version_upgraded=1
+
+          case $last_commit in
+
+              "breaking change:"*)
+                  echo "Creating major release"
+                  major= "$((major+1))"
+                  ;;
+
+              "feat:"*)
+                  echo "Creating minor release"
+                  minor= "$((minor+1))"
+                  ;;
+
+              "fix:"*)
+                  echo "Creating patch release"
+                  patch= "$((patch+1))"
+                  ;;
+
+              *)
+                  echo "Without version upgrade"
+                  version_upgraded=0
+                  ;;
+          esac
+
+          export TAG_VERSION="na"
+          if [[ $version_upgraded == 1]]; then 
+              TAG_VERSION="$major.$minor.$patch"
+              echo "::set-env name=TAG_VERSION::$TAG_VERSION"
+          fi
+
+      - name: Create tag
+        id: create_tag
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo:context.repo.repo,
+              ref: 'refs/tags/$TAG_VERSION'
+              sha: context.sha
+            })
+          
+
+          
+
