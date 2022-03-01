@@ -54,11 +54,14 @@ jobs:
               "breaking change:"*)
                   echo "Creating major release"
                   major="$((major+1))"
+                  minor="0"
+                  patch="0"
                   ;;
 
               "feat:"*)
                   echo "Creating minor release"
                   minor="$((minor+1))"
+                  patch="0"
                   ;;
 
               "fix:"*)
