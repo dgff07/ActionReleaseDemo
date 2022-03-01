@@ -8,9 +8,11 @@ on:
       - closed
 
 jobs:
-  create-tag:
+  define_version:
     runs-on: ubuntu-latest
-    name: Create tag
+    name: Define version
+    outputs:
+      tag_version: ${{ steps.define_version.outputs.tag_version }}
     steps:
       - name: Checkout api-gateway repository
         uses: actions/checkout@v2
@@ -18,6 +20,7 @@ jobs:
           fetch-depth: 0
       
       - name: Define version
+        id: define_version
         run: |
           exist_tag=$(git tag)
           last_tag=""
@@ -69,20 +72,25 @@ jobs:
                   ;;
           esac
 
-          export TAG_VERSION="na"
+          export tag_version="na"
           if [[ $version_upgraded == 1 ]]; then 
-              TAG_VERSION="$major.$minor.$patch"
-              echo "::set-env name=TAG_VERSION::$TAG_VERSION"
+              tag_version="$major.$minor.$patch"
+              echo "::set-output name=tag_version::$tag_version"
           fi
 
-
+  create_tag:
+    needs: define_version
+    runs-on: ubuntu-latest
+    name: Create tag
+    steps: 
       - name: Create tag
         run: |
-          if [[ "$TAG_VERSION" == "na"]]; then
+          tag_version= ${{needs.define_version.outputs.tag_version}}
+          if [[ "$tag_version" == "na"]]; then
             echo "The tag will not be created"
             exit 0
           fi
-          git tag $TAG_VERSION
+          git tag $tag_version
           git push --tags
           
 
