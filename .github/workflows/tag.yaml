@@ -19,7 +19,7 @@ jobs:
       
       - name: Define version
         run: |
-         last_tag=$(git describe --abbrev=0 --tags)
+          last_tag=$(git describe --abbrev=0 --tags)
           major=0
           minor=0
           patch=0
