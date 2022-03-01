@@ -1,4 +1,4 @@
-name: "tag"
+name: "release"
 
 on:
   pull_request:
@@ -81,25 +81,45 @@ jobs:
               echo "::set-output name=tag_version::$tag_version"
           fi
 
-  create_tag:
+  create_release:
     needs: define_version
     runs-on: ubuntu-latest
-    name: Create tag
+    name: Create tag and release
     steps:
-      - name: Checkout api-gateway repository
+      - name: Checkout code
         uses: actions/checkout@v2
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: "${{needs.define_version.outputs.tag_version}}"
+          release_name: "${{needs.define_version.outputs.tag_version}}"
+          body: |
+            test
+          draft: false
+          prerelease: false
 
-      - name: Create tag
-        run: |
-          tag_version="${{needs.define_version.outputs.tag_version}}"
+  # create_tag:
+  #   needs: define_version
+  #   runs-on: ubuntu-latest
+  #   name: Create tag
+  #   steps:
+  #     - name: Checkout api-gateway repository
+  #       uses: actions/checkout@v2
+
+  #     - name: Create tag
+  #       run: |
+  #         tag_version="${{needs.define_version.outputs.tag_version}}"
           
-          if [[ "$tag_version" == "na" ]]; then
-            echo "The tag will not be created"
-            exit 0
-          fi
+  #         if [[ "$tag_version" == "na" ]]; then
+  #           echo "The tag will not be created"
+  #           exit 0
+  #         fi
 
-          git tag "$tag_version"
-          git push --tags
+  #         git tag "$tag_version"
+  #         git push --tags
           
 
           
