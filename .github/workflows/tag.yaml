@@ -85,12 +85,14 @@ jobs:
     steps: 
       - name: Create tag
         run: |
-          tag_version= ${{needs.define_version.outputs.tag_version}}
-          if [[ "$tag_version" == "na"]]; then
+          tag_version="${{needs.define_version.outputs.tag_version}}"
+          
+          if [[ "$tag_version" == "na" ]]; then
             echo "The tag will not be created"
             exit 0
           fi
-          git tag $tag_version
+          
+          git tag "$tag_version"
           git push --tags
           
 
