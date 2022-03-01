@@ -82,7 +82,10 @@ jobs:
     needs: define_version
     runs-on: ubuntu-latest
     name: Create tag
-    steps: 
+    steps:
+      - name: Checkout api-gateway repository
+        uses: actions/checkout@v2
+
       - name: Create tag
         run: |
           tag_version="${{needs.define_version.outputs.tag_version}}"
