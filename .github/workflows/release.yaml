@@ -100,8 +100,6 @@ jobs:
 
           git tag "$tag_version"
           git push --tags
-      
-      - name: create release
   
   create_release:
     needs: create_tag
