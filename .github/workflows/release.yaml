@@ -49,36 +49,40 @@ jobs:
 
           version_upgraded=1
 
-          case $last_commit in
+          is_major () {
+              [[ "$1" == *"breaking change:"* ]]
+          }
 
-              "breaking change:"*)
-                  echo "Creating major release"
-                  major="$((major+1))"
-                  minor="0"
-                  patch="0"
-                  ;;
+          is_minor () {
+              [[ "$1" =~ ^feat[(]?.*[)]?:.* ]]
+          }
 
-              "feat:"*)
-                  echo "Creating minor release"
-                  minor="$((minor+1))"
-                  patch="0"
-                  ;;
+          is_patch () {
+              [[ "$1" =~ ^fix[(]?.*[)]?:.* ]]
+          }
 
-              "fix:"*)
-                  echo "Creating patch release"
-                  patch="$((patch+1))"
-                  ;;
-
-              *)
-                  echo "Without version upgrade"
-                  version_upgraded=0
-                  ;;
-          esac
+          if is_patch $last_commit; then
+              echo "Creating patch release"
+              patch="$((patch+1))"
+          elif is_major $last_commit; then
+              echo "Creating major release"
+              major="$((major+1))"
+              minor="0"
+              patch="0"
+          elif is_minor $last_commit; then
+              echo "Creating minor release"
+              minor="$((minor+1))"
+              patch="0"
+          else
+              echo "Without version upgrade"
+              version_upgraded=0
+          fi
 
           tag_version="na"
           if [[ $version_upgraded == 1 ]]; then 
               tag_version="$major.$minor.$patch"
               echo "::set-output name=tag_version::$tag_version"
+              echo "New version: $tag_version"
           fi
   
   create_release:
