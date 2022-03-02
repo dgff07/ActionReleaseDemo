@@ -43,7 +43,7 @@ jobs:
               patch=${ELEM[2]}
           fi
 
-          last_commit=$(git log -1 --pretty=%B)
+          last_commit='$(git log -1 --pretty=%B)'
           echo "========LAST commit========"
           echo "$last_commit"
 
