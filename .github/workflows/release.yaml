@@ -80,26 +80,6 @@ jobs:
               tag_version="$major.$minor.$patch"
               echo "::set-output name=tag_version::$tag_version"
           fi
-
-  # create_tag:
-  #   needs: define_version
-  #   runs-on: ubuntu-latest
-  #   name: Create tag
-  #   steps:
-  #     - name: Checkout api-gateway repository
-  #       uses: actions/checkout@v2
-
-  #     - name: Create tag
-  #       run: |
-  #         tag_version="${{needs.define_version.outputs.tag_version}}"
-          
-  #         if [[ "$tag_version" == "na" ]]; then
-  #           echo "The tag will not be created"
-  #           exit 0
-  #         fi
-
-  #         git tag "$tag_version"
-  #         git push --tags
   
   create_release:
     needs: define_version
@@ -125,11 +105,11 @@ jobs:
           case old_tag_version in
 
               na)
-                  body="#Changelog \n Check [here](https://github.com/dgff07/ActionReleaseDemo/commits/$tag_version) all the changes made on this release"
+                  body="# Changelog \n Check [here](https://github.com/dgff07/ActionReleaseDemo/commits/$tag_version) all the changes made on this release"
                   ;;
 
               *)
-                  body="#Changelog \n Check [here](https://github.com/dgff07/ActionReleaseDemo/compare/$old_tag_version...$tag_version) all the changes made on this release"
+                  body="# Changelog \n Check [here](https://github.com/dgff07/ActionReleaseDemo/compare/$old_tag_version...$tag_version) all the changes made on this release"
                   ;;
           esac
 
