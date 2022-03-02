@@ -81,28 +81,28 @@ jobs:
               echo "::set-output name=tag_version::$tag_version"
           fi
 
-  create_tag:
-    needs: define_version
-    runs-on: ubuntu-latest
-    name: Create tag
-    steps:
-      - name: Checkout api-gateway repository
-        uses: actions/checkout@v2
+  # create_tag:
+  #   needs: define_version
+  #   runs-on: ubuntu-latest
+  #   name: Create tag
+  #   steps:
+  #     - name: Checkout api-gateway repository
+  #       uses: actions/checkout@v2
 
-      - name: Create tag
-        run: |
-          tag_version="${{needs.define_version.outputs.tag_version}}"
+  #     - name: Create tag
+  #       run: |
+  #         tag_version="${{needs.define_version.outputs.tag_version}}"
           
-          if [[ "$tag_version" == "na" ]]; then
-            echo "The tag will not be created"
-            exit 0
-          fi
+  #         if [[ "$tag_version" == "na" ]]; then
+  #           echo "The tag will not be created"
+  #           exit 0
+  #         fi
 
-          git tag "$tag_version"
-          git push --tags
+  #         git tag "$tag_version"
+  #         git push --tags
   
   create_release:
-    needs: create_tag
+    needs: define_version
     runs-on: ubuntu-latest
     name: Create release
     steps:
