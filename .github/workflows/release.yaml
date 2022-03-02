@@ -61,15 +61,15 @@ jobs:
               [[ "$1" =~ ^fix[(]?.*[)]?:.* ]]
           }
 
-          if is_patch $last_commit; then
+          if is_patch "$last_commit"; then
               echo "Creating patch release"
               patch="$((patch+1))"
-          elif is_major $last_commit; then
+          elif is_major "$last_commit"; then
               echo "Creating major release"
               major="$((major+1))"
               minor="0"
               patch="0"
-          elif is_minor $last_commit; then
+          elif is_minor "$last_commit"; then
               echo "Creating minor release"
               minor="$((minor+1))"
               patch="0"
