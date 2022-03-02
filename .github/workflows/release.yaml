@@ -133,7 +133,7 @@ jobs:
                   ;;
           esac
 
-          curl -v -i -X POST -H "Content-Type:application/json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/dgff07/ActionReleaseDemo/releases -d '{"tag_name":"$tag_version","target_commitish": "main","name": "$tag_version","body": "$body","draft": false,"prerelease": false}'
+          curl -v -i -X POST -H "Content-Type:application/json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/dgff07/ActionReleaseDemo/releases -d '{"tag_name":"${{ tag_version }}","target_commitish": "main","name": "${{ tag_version }}","body": "${{ body }}","draft": false,"prerelease": false}'
 
 
           
